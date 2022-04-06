@@ -1128,17 +1128,17 @@ client.on('messageCreate', async message => {
   if (!message.client.user) return;
   if (message.author.equals(message.client.user)) return;
 
-  async function sendMessage (sendFunction: () => Promise<any> ) {
-      message.channel.sendTyping()
+  async function sendMessage(sendFunction: () => Promise<any>) {
+    message.channel.sendTyping()
       .catch(e => {
         console.log(e);
       });
-      setTimeout(() => {
-        sendFunction()
+    setTimeout(() => {
+      sendFunction()
         .catch(e => {
           console.log(e);
         })
-      }, 1000);
+    }, 1000);
   }
 
   if (!message.client.user) return;
@@ -1149,7 +1149,7 @@ client.on('messageCreate', async message => {
     return;
   }
 
-  // Reply to mentions or replies
+  // Respond to insults
   const messages = await message.channel.messages.fetch({ limit: 2 });
   const users = messages.map(m => m.author);
   const previousUser = users[1]
