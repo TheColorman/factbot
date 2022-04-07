@@ -1,9 +1,14 @@
-import { Client, Intents, Message, MessageAttachment } from 'discord.js';
+import { Client, Intents, Message, MessageAttachment, MessageEmbed } from 'discord.js';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 dotenv.config();
 const token = process.env.TOKEN;
+
+type Image = {
+  url: string;
+  name: string;
+}
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] });
 
@@ -35,6 +40,14 @@ const insults = [
   "idiot", "idio", "idit", "diot", "iiot", "diot", "idiott", "idioot", "idiiot", "iddiot", "iidiot", "idioyt", "idiogt", "idioht", "idiort", "idioft", "idipot", "idilot", "idiiot", "idikot", "idoiot", "idkiot", "idliot", "iduiot", "idjiot", "ifdiot", "icdiot", "ivdiot", "isdiot", "iwdiot", "iediot", "irdiot", "ixdiot", "oidiot", "kidiot", "lidiot", "uidiot", "jidiot", "idioy", "idiog", "idioh", "idior", "idiof", "idipt", "idilt", "idiit", "idikt", "odiot", "kdiot", "ldiot", "udiot", "jdiot", "ifiot", "iciot", "iviot", "isiot", "iwiot", "ieiot", "iriot", "ixiot", "odiot", "kdiot", "ldiot", "udiot", "jdiot", "idito", "idoit", "iidot", "diiot",
   "faggot", "faggo", "faggt", "fagot", "fagot", "fggot", "aggot", "faggott", "faggoot", "fagggot", "fagggot", "faaggot", "ffaggot", "faggoyt", "faggogt", "faggoht", "faggort", "faggoft", "faggpot", "fagglot", "faggiot", "faggkot", "faghgot", "fagbgot", "fagngot", "fagfgot", "fagrgot", "fagtgot", "fagygot", "fagvgot", "fahggot", "fabggot", "fanggot", "fafggot", "farggot", "fatggot", "fayggot", "favggot", "fsaggot", "fzaggot", "fxaggot", "fqaggot", "fwaggot", "gfaggot", "vfaggot", "bfaggot", "dfaggot", "efaggot", "rfaggot", "tfaggot", "cfaggot", "faggoy", "faggog", "faggoh", "faggor", "faggof", "faggpt", "fagglt", "faggit", "faggkt", "fahgot", "fabgot", "fangot", "fafgot", "fargot", "fatgot", "faygot", "favgot", "fahgot", "fabgot", "fangot", "fafgot", "fargot", "fatgot", "faygot", "favgot", "fsggot", "fzggot", "fxggot", "fqggot", "fwggot", "gaggot", "vaggot", "baggot", "daggot", "eaggot", "raggot", "taggot", "caggot", "faggto", "fagogt", "faggot", "fgagot", "afggot",
 ];
+
+const praise = [
+  "good bot",
+  "thank you",
+  "thanks",
+  "yay"
+];
+
 const insultReplies = [
   "stfu",
   "shut up",
@@ -55,6 +68,18 @@ const insultReplies = [
   "retard", "retar", "etard", "retrd", "reard", "rtard", "etard", "retardd", "retarrd", "retaard", "rettard", "reetard", "rretard", "retarfd", "retarcd", "retarvd", "retarsd", "retarwd", "retared", "retarrd", "retarxd", "retatrd", "retafrd", "retagrd", "retaerd", "retadrd", "retsard", "retzard", "retxard", "retqard", "retward", "reytard", "regtard", "rehtard", "rertard", "reftard", "rretard", "rdetard", "rfetard", "rwetard", "rsetard", "tretard", "fretard", "gretard", "eretard", "dretard", "retarf", "retarc", "retarv", "retars", "retarw", "retare", "retarr", "retarx", "tetard", "fetard", "getard", "eetard", "detard", "retsrd", "retzrd", "retxrd", "retqrd", "retwrd", "reyard", "regard", "rehard", "rerard", "refard", "rrtard", "rdtard", "rftard", "rwtard", "rstard", "tetard", "fetard", "getard", "eetard", "detard", "retadr", "retrad", "reatrd", "rteard", "ertard",
   "idiot", "idio", "idit", "diot", "iiot", "diot", "idiott", "idioot", "idiiot", "iddiot", "iidiot", "idioyt", "idiogt", "idioht", "idiort", "idioft", "idipot", "idilot", "idiiot", "idikot", "idoiot", "idkiot", "idliot", "iduiot", "idjiot", "ifdiot", "icdiot", "ivdiot", "isdiot", "iwdiot", "iediot", "irdiot", "ixdiot", "oidiot", "kidiot", "lidiot", "uidiot", "jidiot", "idioy", "idiog", "idioh", "idior", "idiof", "idipt", "idilt", "idiit", "idikt", "odiot", "kdiot", "ldiot", "udiot", "jdiot", "ifiot", "iciot", "iviot", "isiot", "iwiot", "ieiot", "iriot", "ixiot", "odiot", "kdiot", "ldiot", "udiot", "jdiot", "idito", "idoit", "iidot", "diiot",
   "faggot", "faggo", "faggt", "fagot", "fagot", "fggot", "aggot", "faggott", "faggoot", "fagggot", "fagggot", "faaggot", "ffaggot", "faggoyt", "faggogt", "faggoht", "faggort", "faggoft", "faggpot", "fagglot", "faggiot", "faggkot", "faghgot", "fagbgot", "fagngot", "fagfgot", "fagrgot", "fagtgot", "fagygot", "fagvgot", "fahggot", "fabggot", "fanggot", "fafggot", "farggot", "fatggot", "fayggot", "favggot", "fsaggot", "fzaggot", "fxaggot", "fqaggot", "fwaggot", "gfaggot", "vfaggot", "bfaggot", "dfaggot", "efaggot", "rfaggot", "tfaggot", "cfaggot", "faggoy", "faggog", "faggoh", "faggor", "faggof", "faggpt", "fagglt", "faggit", "faggkt", "fahgot", "fabgot", "fangot", "fafgot", "fargot", "fatgot", "faygot", "favgot", "fahgot", "fabgot", "fangot", "fafgot", "fargot", "fatgot", "faygot", "favgot", "fsggot", "fzggot", "fxggot", "fqggot", "fwggot", "gaggot", "vaggot", "baggot", "daggot", "eaggot", "raggot", "taggot", "caggot", "faggto", "fagogt", "faggot", "fgagot", "afggot",
+];
+const praiseReplies = [
+  "You're a good person, %p!",
+  "thanks",
+  "youre welcome",
+  "i know",
+  "im glad you feel that way about",
+  "i love you",
+  "damnm, you should give me admin",
+  "i love you too",
+  "ill suck your duck for 20 dollars",
+  "thank you so much %USERNAME%"
 ]
 
 const general = ['I have commited several warcrimes during the Bosnian civil war',
@@ -1100,6 +1125,19 @@ const words = ["cause",
   "amount",
   "defeated",
   "scintillating"
+];
+
+const hornyWords = [
+  "sex",
+  "horny",
+  "seggs"
+];
+
+const greetings = [
+  "hi",
+  "hello",
+  "greetings",
+  "hey",
 ]
 
 
@@ -1123,11 +1161,29 @@ const createOutput = async (message: string, inputMessage?: Message): Promise<st
   return message;
 }
 
+const saveImagae = (attachment: MessageAttachment | MessageEmbed) => {
+  // Save attachment link
+  if (!attachment || !attachment.url) return;
+  // Save attachment to images/download.json
+  const image = {
+    url: attachment.url,
+    name: ("name" in attachment ? attachment.name : "Embed") ?? "Embed",
+  };
+  const images = JSON.parse(fs.readFileSync('./images/download.json', 'utf8')).images as Image[];
+  // Check if url exists
+  const imageExists = images.find(i => i.url === image.url);
+  if (imageExists) return;
+  images.push(image);
+  fs.writeFileSync('./images/download.json', JSON.stringify({ images }));
+}
+
 // Respond to funny messages
 client.on('messageCreate', async message => {
   if (!message.client.user) return;
   if (message.author.equals(message.client.user)) return;
+  const previousMessageUser = (await message.channel.messages.fetch({ limit: 2 })).map(m => m.author)[1]
 
+  // Function to send messages
   async function sendMessage(sendFunction: () => Promise<any>) {
     message.channel.sendTyping()
       .catch(e => {
@@ -1141,24 +1197,32 @@ client.on('messageCreate', async message => {
     }, 1000);
   }
 
-  if (!message.client.user) return;
+  // Random seed
   const random = Math.random();
-  // Reply to bots
-  if (message.author.bot && random < 0.20) {
-    sendMessage(async () => message.reply(await createOutput(botResponses[Math.floor(Math.random() * botResponses.length)])))
-    return;
+
+  // -- IMAGE COLLECTION --
+  // If the message contains a link to an image or attachment
+  if (message.attachments.size > 0 || message.embeds.length > 0) {
+    const file = message.attachments.first() || message.embeds[0];
+    saveImagae(file);
+
+    // Respond with random downloaded image
+    if (random < 0.05) {
+      sendMessage(async () => {
+        const images = JSON.parse(fs.readFileSync('./images/download.json', 'utf8')).images as Image[];
+        const randomImage = images[Math.floor(Math.random() * images.length)];
+        await message.reply(randomImage.url);
+      });
+    }
   }
 
-  // Respond to insults
-  const messages = await message.channel.messages.fetch({ limit: 2 });
-  const users = messages.map(m => m.author);
-  const previousUser = users[1]
-  if (previousUser.equals(message.client.user)) {
-    // check if message contains insults
-    if (insults.some(insult => message.content.toLowerCase().includes(insult))) {
-      sendMessage(async () => message.reply(await createOutput(insultReplies[Math.floor(Math.random() * insultReplies.length)])));
-      return;
-    }
+
+  // -- SPECIAL RESPONSES --
+
+  // Respond to bots
+  if (message.author.bot && random < 0.05) {
+    sendMessage(async () => message.reply(await createOutput(botResponses[Math.floor(Math.random() * botResponses.length)])))
+    return;
   }
 
   // Respond to mentions
@@ -1167,28 +1231,51 @@ client.on('messageCreate', async message => {
     return;
   }
 
+  // insults
+  if (previousMessageUser.equals(message.client.user)) {
+    // check if message contains insults
+    if (insults.some(insult => message.content.toLowerCase().includes(insult))) {
+      sendMessage(async () => message.reply(await createOutput(insultReplies[Math.floor(Math.random() * insultReplies.length)], message)));
+      return;
+    }
+  }
+  // praise
+  if (previousMessageUser.equals(message.client.user)) {
+    // check if message contains praise
+    if (praise.some(praise => message.content.toLowerCase().includes(praise))) {
+      sendMessage(async () => message.reply(await createOutput(praiseReplies[Math.floor(Math.random() * praiseReplies.length)], message)));
+      return;
+    }
+  }
+
   // -- KEYWORDS --
+
   // cunny
   if (message.content.includes("cunny") && random > 0.50) {
     // choose random image
     const image = images[Math.floor(Math.random() * images.length)]
-    const file = new MessageAttachment(path.resolve(__dirname + '\\images\\' + image));
+    const file = new MessageAttachment(path.resolve(path.join(__dirname, "images", image)));
     sendMessage(() => message.reply({ files: [file] }));
     return;
   }
   // bug
-  if (message.content.includes("bug") && random > 0.80) {
+  if (message.content.includes("bug")) {
     const bug = bugs[Math.floor(Math.random() * bugs.length)]
-    const file = new MessageAttachment(path.resolve(__dirname + '\\images\\bug\\' + bug));
+    const file = new MessageAttachment(path.resolve(path.join(__dirname, 'images', 'bug', bug)));
     sendMessage(() => message.reply({ files: [file] }));
     return;
   }
   // sex 
-  if (message.content.includes("sex")) {
+  if (hornyWords.some(w => message.content.includes(w))) {
     const horny = images.filter(image => image.includes("horny"));
     const image = horny[Math.floor(Math.random() * horny.length)];
-    const file = new MessageAttachment(path.resolve(__dirname + '\\images\\' + image));
+    const file = new MessageAttachment(path.resolve(path.join(__dirname, 'images', image)));
     sendMessage(() => message.reply({ files: [file] }));
+    return;
+  }
+  // greetings
+  if (greetings.some(w => message.content.includes(w) && random < 0.05)) {
+    sendMessage(async () => message.reply(await createOutput(greetings[Math.floor(Math.random() * greetings.length)])));
     return;
   }
 });

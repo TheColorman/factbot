@@ -5,8 +5,8 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "npm start",
-      "name": "Run npm start",
+      "command": "ts-node index.ts",
+      "name": "Run ts-node index.ts",
       "request": "launch",
       "type": "node-terminal"
     }
