@@ -1,11 +1,14 @@
 version: "2.1"
 services:
   node:
-    image: "node:17.8-alpine3.14"
-    user: "node"
-    working_dir: /home/node/app
+    image: "arm32v7/node:17.8-alpine"
+    container_name: "fact-bot"
+    user: "root"
+    working_dir: "/home/node/app"
     environment:
-      - NODE_ENV=production
+      - "NODE_ENV=production"
     volumes:
-      - /opt/fact-bot/:/home/node/app
-    # command:
+      - "/opt/fact-bot/:/home/node/app"
+    command: "node -v"
+    security_opt:
+      - seccomp:unconfined
