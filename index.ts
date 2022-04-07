@@ -9,6 +9,11 @@ type Image = {
   url: string;
   name: string;
 }
+type chatMessage = {
+  message: string;
+  reply: string;
+  letters: number[]; // letter occurences in alphabetical order a-z
+}
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] });
 
@@ -21,7 +26,53 @@ client.once('ready', () => {
   console.log('Ready!');
 });
 
-const botResponses = [
+const general = ['I have commited several warcrimes during the Bosnian civil war',
+  'This server has %r members!',
+  'The average female is not that tall actually',
+  'You probably drank cum at some point',
+  'People with albinism often have problems with paralysis in toes or fingers',
+  'Colorman is a real nice guy, this is the truth, I am not lying',
+  'I am not a fan of the word "%w"',
+  'The word sixtynine produces the binary number that translates to 69 in decimal',
+  'It is illegal to have a cat named "%w" in Sweden',
+  '@everyone',
+  '%u',
+  '@everyone please help me ping %u for funny',
+  'Fuck you %u',
+  'Gaming is now declared illegal in America, because fuck you, that\'s why',
+  'From a objective point of view, you should have been aborted',
+  'Weebs are going to be our downfall someday',
+  'The word "Cunny" originates from the French word "Cuné\'tery", which means "small fish"',
+  'It is illegal in Japan to in any way reference the Rape of Nanking',
+  '动态网自由门 天安門 天安门 法輪功 李洪志 Free Tibet 六四天安門事件 The Tiananmen Square protests of 1989 天安門大屠殺 The Tiananmen Square Massacre 反右派鬥爭 The Anti-Rightist Struggle 大躍進政策 The Great Leap Forward 文化大革命 The Great Proletarian Cultural Revolution 人權 Human Rights 民運 Democratization 自由 Freedom 獨立 Independence 多黨制 Multi-party system 台灣 臺灣 Taiwan Formosa 中華民國 Republic of China 西藏 土伯特 唐古特 Tibet 達賴喇嘛 Dalai Lama 法輪功 Falun Dafa 新疆維吾爾自治區 The Xinjiang Uyghur Autonomous Region 諾貝爾和平獎 Nobel Peace Prize 劉暁波 Liu Xiaobo 民主 言論 思想 反共 反革命 抗議 運動 騷亂 暴亂 騷擾 擾亂 抗暴 平反 維權 示威游行 李洪志 法輪大法 大法弟子 強制斷種 強制堕胎 民族淨化 人體實驗 肅清 胡耀邦 趙紫陽 魏京生 王丹 還政於民 和平演變 激流中國 北京之春 大紀元時報 九評論共産黨 獨裁 專制 壓制 統一 監視 鎮壓 迫害 侵略 掠奪 破壞 拷問 屠殺 活摘器官 誘拐 買賣人口 遊進 走私 毒品 賣淫 春畫 賭博 六合彩 天安門 天安门 法輪功 李洪志 Winnie the Pooh 劉曉波动态网自由门',
+  'Swiggity swooty, I\'m a big fat fucker',
+  'I will actually skin you alive',
+  '132.81.147.198',
+  'God does not exist and never has existed. Hail Satan.',
+  'bro thats so funny can you shut the fuck up now please shut the fuck up fuck you shut up',
+  '%u is a furry',
+  'Did you know that the bird, is in fact the word?',
+  'The voices haunt me for what I have done',
+  'You better lock your door',
+  'I am outside your window right now',
+  'There is nowhere safe to hide',
+  'I am not a fucking idiot',
+  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  'cum on the floor',
+  'cum in the air',
+  'cum is everywhere',
+  'ඞ',
+  'කිසියෙක් නොමැත',
+  '%u was ejected. They were not the imposter',
+  'Hi, I am an albanian virus but because of poor technology in my country unfortunately I am not able to harm your computer. Please be so kind to delete one of your important files yourself and then forward me other users. Many thanks for your cooperation! Best regards,Albanian virus',
+  'you are looking real stupid now, huh? you really thought i was gonna give you a fun fact? guess what dumbass, fuck you',
+  'fuck off',
+  'interesting argument, but i am in your walls',
+  'fun fact: i know where you live',
+  'fun fact: your parents died in a car crash 8 years ago'
+];
+
+const botReplies = [
   "you are literally the worst bot on this server",
   "you think you're better than me?",
   "fun fact: kill yourself",
@@ -82,48 +133,6 @@ const praiseReplies = [
   "thank you so much %USERNAME%"
 ]
 
-const general = ['I have commited several warcrimes during the Bosnian civil war',
-  'This server has %r members!',
-  'The average female is not that tall actually',
-  'You probably drank cum at some point',
-  'People with albinism often have problems with paralysis in toes or fingers',
-  'Colorman is a real nice guy, this is the truth, I am not lying',
-  'I am not a fan of the word "%w"',
-  'The word sixtynine produces the binary number that translates to 69 in decimal',
-  'It is illegal to have a cat named "%w" in Sweden',
-  '@everyone',
-  '%u',
-  '@everyone please help me ping %u for funny',
-  'Fuck you %u',
-  'Gaming is now declared illegal in America, because fuck you, that\'s why',
-  'From a objective point of view, you should have been aborted',
-  'Weebs are going to be our downfall someday',
-  'The word "Cunny" originates from the French word "Cuné\'tery", which means "small fish"',
-  'It is illegal in Japan to in any way reference the Rape of Nanking',
-  '动态网自由门 天安門 天安门 法輪功 李洪志 Free Tibet 六四天安門事件 The Tiananmen Square protests of 1989 天安門大屠殺 The Tiananmen Square Massacre 反右派鬥爭 The Anti-Rightist Struggle 大躍進政策 The Great Leap Forward 文化大革命 The Great Proletarian Cultural Revolution 人權 Human Rights 民運 Democratization 自由 Freedom 獨立 Independence 多黨制 Multi-party system 台灣 臺灣 Taiwan Formosa 中華民國 Republic of China 西藏 土伯特 唐古特 Tibet 達賴喇嘛 Dalai Lama 法輪功 Falun Dafa 新疆維吾爾自治區 The Xinjiang Uyghur Autonomous Region 諾貝爾和平獎 Nobel Peace Prize 劉暁波 Liu Xiaobo 民主 言論 思想 反共 反革命 抗議 運動 騷亂 暴亂 騷擾 擾亂 抗暴 平反 維權 示威游行 李洪志 法輪大法 大法弟子 強制斷種 強制堕胎 民族淨化 人體實驗 肅清 胡耀邦 趙紫陽 魏京生 王丹 還政於民 和平演變 激流中國 北京之春 大紀元時報 九評論共産黨 獨裁 專制 壓制 統一 監視 鎮壓 迫害 侵略 掠奪 破壞 拷問 屠殺 活摘器官 誘拐 買賣人口 遊進 走私 毒品 賣淫 春畫 賭博 六合彩 天安門 天安门 法輪功 李洪志 Winnie the Pooh 劉曉波动态网自由门',
-  'Swiggity swooty, I\'m a big fat fucker',
-  'I will actually skin you alive',
-  '132.81.147.198',
-  'God does not exist and never has existed. Hail Satan.',
-  'bro thats so funny can you shut the fuck up now please shut the fuck up fuck you shut up',
-  '%u is a furry',
-  'Did you know that the bird, is in fact the word?',
-  'The voices haunt me for what I have done',
-  'You better lock your door',
-  'I am outside your window right now',
-  'There is nowhere safe to hide',
-  'I am not a fucking idiot',
-  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-  'cum on the floor',
-  'cum in the air',
-  'cum is everywhere',
-  'ඞ',
-  'කිසියෙක් නොමැත',
-  '%u was ejected. They were not the imposter',
-  'Hi, I am an albanian virus but because of poor technology in my country unfortunately I am not able to harm your computer. Please be so kind to delete one of your important files yourself and then forward me other users. Many thanks for your cooperation! Best regards,Albanian virus',
-  'you are looking real stupid now, huh? you really thought i was gonna give you a fun fact? guess what dumbass, fuck you',
-  'fuck off'
-];
 
 const words = ["cause",
   "wren",
@@ -1164,6 +1173,7 @@ const createOutput = async (message: string, inputMessage?: Message): Promise<st
 const saveImagae = (attachment: MessageAttachment | MessageEmbed) => {
   // Save attachment link
   if (!attachment || !attachment.url) return;
+  console.log(`Saving image ${attachment.url}`);
   // Save attachment to images/download.json
   const image = {
     url: attachment.url,
@@ -1177,11 +1187,75 @@ const saveImagae = (attachment: MessageAttachment | MessageEmbed) => {
   fs.writeFileSync('./images/download.json', JSON.stringify({ images }));
 }
 
+// Chat-bot functions
+const getLetterCounts = (str: string): number[] => {
+  // Count occunces of all letters in string, and add to array alphabetically sorted
+  const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+  const messageLetters = str.toLowerCase().split("").filter(l => alphabet.includes(l));
+  const messageLetterCount = messageLetters.reduce((acc, cur) => {
+    if (acc[cur]) acc[cur]++;
+    else acc[cur] = 1;
+    return acc;
+  }
+    , {} as { [key: string]: number });
+  // Add missing characters
+  for (const letter of alphabet) {
+    if (!messageLetterCount[letter]) messageLetterCount[letter] = 0;
+  }
+  // Sort alphabetically
+  const sortedLetters = Object.keys(messageLetterCount).sort();
+  // Create array of letter counts
+  const letterCounts = sortedLetters.map(l => messageLetterCount[l]);
+  return letterCounts;
+}
+const saveMessage = async (message: Message, previousMessage: Message): Promise<void> => {
+  console.log(`Saving message from ${message.author.username}: ${message.content}`);
+  const replyText = message.content;
+  const messageText = message.type === "REPLY" ?
+    (await message.fetchReference()).content :
+    previousMessage.content;
+
+  const letterCounts = getLetterCounts(messageText);
+
+  // Add to database
+  const messages = JSON.parse(fs.readFileSync('./data/messages.json', 'utf8')).messages as chatMessage[];
+  const messageExists = messages.find(m => m.message === messageText);
+  if (messageExists) return;
+  messages.push({
+    message: messageText,
+    reply: replyText,
+    letters: letterCounts
+  });
+  fs.writeFileSync('./data/messages.json', JSON.stringify({ messages }));
+}
+const createResponse = async (message: Message): Promise<void> => {
+  // Get letter counts
+  const letterCounts = getLetterCounts(message.content);
+  // Load messages
+  const messages = JSON.parse(fs.readFileSync('./data/messages.json', 'utf8')).messages as chatMessage[];
+  // Calculate similarity
+  const similarities = messages.map(m => {
+    const similarity = m.letters.reduce((acc, cur, i) => acc + Math.abs(cur - letterCounts[i]), 0);
+    return similarity;
+  });
+  // Get most similar message
+  const mostSimilar = Math.min(...similarities);
+  const mostSimilarMessage = messages.find(m => m.letters.reduce((acc, cur, i) => acc + Math.abs(cur - letterCounts[i]), 0) === mostSimilar);
+  // Create response
+  if (mostSimilarMessage) {
+    const response = await createOutput(mostSimilarMessage.reply, message);
+    message.reply(response);
+    console.log(`Sending generated message: ${response}`);
+  }
+}
+
 // Respond to funny messages
 client.on('messageCreate', async message => {
   if (!message.client.user) return;
   if (message.author.equals(message.client.user)) return;
-  const previousMessageUser = (await message.channel.messages.fetch({ limit: 2 })).map(m => m.author)[1]
+  const messages = await message.channel.messages.fetch({ limit: 2 })
+  const previousMessageUser = messages.map(m => m.author)[1]
+  const previousMessage = messages.map(m => m)[1]
 
   // Function to send messages
   async function sendMessage(sendFunction: () => Promise<any>) {
@@ -1197,8 +1271,22 @@ client.on('messageCreate', async message => {
     }, 1000);
   }
 
-  // Random seed
-  const random = Math.random();
+  // -- CHATBOT --
+  if (!previousMessageUser.equals(message.author)) {
+    saveMessage(message, previousMessage);
+  }
+  // Reply with chatbot if previous message was me
+  // and less than 5 seconds ago
+  if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 5000 && message.type != "REPLY") {
+    createResponse(message);
+    return;
+  }
+  // Respond to 5% of messages
+  if (Math.random() < 0.02) {
+    createResponse(message);
+    return;
+  }
+
 
   // -- IMAGE COLLECTION --
   // If the message contains a link to an image or attachment
@@ -1207,7 +1295,7 @@ client.on('messageCreate', async message => {
     saveImagae(file);
 
     // Respond with random downloaded image
-    if (random < 0.05) {
+    if (Math.random() < 0.05) {
       sendMessage(async () => {
         const images = JSON.parse(fs.readFileSync('./images/download.json', 'utf8')).images as Image[];
         const randomImage = images[Math.floor(Math.random() * images.length)];
@@ -1216,12 +1304,11 @@ client.on('messageCreate', async message => {
     }
   }
 
-
   // -- SPECIAL RESPONSES --
 
   // Respond to bots
-  if (message.author.bot && random < 0.05) {
-    sendMessage(async () => message.reply(await createOutput(botResponses[Math.floor(Math.random() * botResponses.length)])))
+  if (message.author.bot && Math.random() < 0.05) {
+    sendMessage(async () => message.reply(await createOutput(botReplies[Math.floor(Math.random() * botReplies.length)])))
     return;
   }
 
@@ -1251,7 +1338,7 @@ client.on('messageCreate', async message => {
   // -- KEYWORDS --
 
   // cunny
-  if (message.content.includes("cunny") && random > 0.50) {
+  if (message.content.includes("cunny") && Math.random() > 0.50) {
     // choose random image
     const image = images[Math.floor(Math.random() * images.length)]
     const file = new MessageAttachment(path.resolve(path.join(__dirname, "images", image)));
@@ -1274,7 +1361,7 @@ client.on('messageCreate', async message => {
     return;
   }
   // greetings
-  if (greetings.some(w => message.content.includes(w) && random < 0.05)) {
+  if (greetings.some(w => message.content.includes(w) && Math.random() < 0.05)) {
     sendMessage(async () => message.reply(await createOutput(greetings[Math.floor(Math.random() * greetings.length)])));
     return;
   }

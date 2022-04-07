@@ -1,28 +1,3 @@
-{
-  "compilerOptions": {
-    "target": "es2016",
-    "experimentalDecorators": true,
-    "module": "commonjs",
-    "lib": ["es6"],
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "outDir": "./",
-    "removeComments": true,
-    "importHelpers": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noImplicitAny": true,
-    "skipLibCheck": true
-  },
-  "files": ["index.ts"],
-  "include": [
-    "./**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:11b721b2cfc0b0661cbf97633bdc243a6d5ad4a39aa3866e1fc11d61605d0f67
+size 625
