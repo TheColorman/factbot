@@ -3,7 +3,7 @@ services:
   node:
     image: "arm32v7/node:17.8-alpine"
     container_name: "fact-bot"
-    user: "root"
+    user: node:1002
     working_dir: "/home/node/app"
     environment:
       - "NODE_ENV=production"
@@ -11,8 +11,4 @@ services:
       - "/opt/fact-bot/:/home/node/app"
     security_opt:
       - seccomp:unconfined
-    command: bash -c "
-        npm install
-        && npm run build
-        && npm run start
-      "
+    command: npm run setup
