@@ -1174,17 +1174,17 @@ const saveImagae = (attachment: MessageAttachment | MessageEmbed) => {
   // Save attachment link
   if (!attachment || !attachment.url) return;
   console.log(`Saving image ${attachment.url}`);
-  // Save attachment to images/download.json
+  // Save attachment to data/download.json
   const image = {
     url: attachment.url,
     name: ("name" in attachment ? attachment.name : "Embed") ?? "Embed",
   };
-  const images = JSON.parse(fs.readFileSync('./images/download.json', 'utf8')).images as Image[];
+  const images = JSON.parse(fs.readFileSync('./data/download.json', 'utf8')).images as Image[];
   // Check if url exists
   const imageExists = images.find(i => i.url === image.url);
   if (imageExists) return;
   images.push(image);
-  fs.writeFileSync('./images/download.json', JSON.stringify({ images }));
+  fs.writeFileSync('./data/download.json', JSON.stringify({ images }));
 }
 
 // Chat-bot functions
@@ -1297,7 +1297,7 @@ client.on('messageCreate', async message => {
     // Respond with random downloaded image
     if (Math.random() < 0.05) {
       sendMessage(async () => {
-        const images = JSON.parse(fs.readFileSync('./images/download.json', 'utf8')).images as Image[];
+        const images = JSON.parse(fs.readFileSync('./data/download.json', 'utf8')).images as Image[];
         const randomImage = images[Math.floor(Math.random() * images.length)];
         await message.reply(randomImage.url);
       });
