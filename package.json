@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "test": "ts-node ./index.ts",
-    "start": "ts-node ./index.ts"
+    "build": "npx tsc",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
