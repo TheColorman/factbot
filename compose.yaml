@@ -12,7 +12,7 @@ services:
     security_opt:
       - seccomp:unconfined
     command: bash -c "
-      npm install
-      && npm run build
-      && npm run start
-    "
+        npm install
+        && npm run build
+        && npm run start
+      "
