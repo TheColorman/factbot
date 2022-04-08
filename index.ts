@@ -1271,8 +1271,10 @@ client.on('messageCreate', async message => {
     saveMessage(message, previousMessage);
   }
   // Reply with chatbot if previous message was me
-  // and less than 8 seconds ago
-  if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 8000 && message.type != "REPLY") {
+  // and less than 10 seconds ago
+  console.log(previousMessageUser.username);
+  console.log(Date.now() - previousMessage.createdTimestamp);
+  if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 10000 && message.type != "REPLY") {
     createResponse(message);
     return;
   }
