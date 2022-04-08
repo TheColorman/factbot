@@ -1311,7 +1311,7 @@ client.on('messageCreate', async message => {
     saveImagae(file);
 
     // Respond with random downloaded image
-    if (Math.random() < 0.20) {
+    if (Math.random() < 0.10) {
       sendMessage(async () => {
         const images = JSON.parse(fs.readFileSync('./data/download.json', 'utf8')).images as string[];
         const randomImage = images[Math.floor(Math.random() * images.length)];
