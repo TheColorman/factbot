@@ -1318,6 +1318,11 @@ client.on('messageCreate', async message => {
 
   // Respond to mentions
   if (message.mentions.users.has(message.client.user.id)) {
+    // Respond with chatbot message if previous message was me + less than 10 seconds ago
+    if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 10000) {
+      createChatResponse(message);
+      return;
+    }
     sendMessage(async () => safeReply(message, await createOutput(general[Math.floor(Math.random() * general.length)], message)));
     return;
   }
