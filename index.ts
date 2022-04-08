@@ -1281,7 +1281,7 @@ client.on('messageCreate', async message => {
   }
   // Reply with chatbot if previous message was me
   // and less than 10 seconds ago
-  if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 10000 && message.type != "REPLY") {
+  if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 7000 && message.type != "REPLY") {
     createChatResponse(message);
     return;
   }
@@ -1318,14 +1318,14 @@ client.on('messageCreate', async message => {
 
   // Respond to mentions
   if (message.mentions.users.has(message.client.user.id)) {
-    // Respond with chatbot message if previous message was me + less than 10 seconds ago
+    // Respond with chatbot message if previous message was me + less than 7 seconds ago
     if (message.type === "REPLY") {
       const reference = await message.fetchReference();
-      if (reference.author.equals(message.client.user) && Date.now() - reference.createdTimestamp < 10000) {
+      if (reference.author.equals(message.client.user) && Date.now() - reference.createdTimestamp < 7000) {
         createChatResponse(message);
         return;
       }
-    } else if (previousMessage.author.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 10000) {
+    } else if (previousMessage.author.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 7000) {
       createChatResponse(message);
       return;
     }
