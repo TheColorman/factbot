@@ -1290,7 +1290,7 @@ client.on('messageCreate', async message => {
     saveImagae(file);
 
     // Respond with random downloaded image
-    if (Math.random() < 0.05) {
+    if (Math.random() < 0.10) {
       sendMessage(async () => {
         const images = JSON.parse(fs.readFileSync('./data/download.json', 'utf8')).images as string[];
         const randomImage = images[Math.floor(Math.random() * images.length)];
@@ -1356,7 +1356,7 @@ client.on('messageCreate', async message => {
     return;
   }
   // greetings
-  if (greetings.some(w => message.content.includes(w) && Math.random() < 0.05)) {
+  if (greetings.some(w => message.content.includes(w) && Math.random() < 0.10)) {
     sendMessage(async () => message.reply(await createOutput(greetings[Math.floor(Math.random() * greetings.length)])));
     return;
   }
