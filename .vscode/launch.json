@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c7b143221d4cfce905264da0878b02b973edd1071d9cf5d8bcc4f9aa7f4cbbcb
-size 390
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "command": "ts-node index.ts",
+      "name": "Run ts-node index.ts",
+      "request": "launch",
+      "type": "node-terminal"
+    }
+  ]
+}
