@@ -1257,7 +1257,7 @@ client.on('messageCreate', async message => {
   if (message.author.equals(message.client.user)) return;
   const isReply = message.type === "REPLY";
   const newestMessages = await message.channel.messages.fetch({ limit: 2 })
-  const repliedMessage = await message.fetchReference();
+  const repliedMessage = isReply ? await message.fetchReference() : undefined ?? newestMessages.map(m => m)[1];
   const previousMessageUser = isReply ? repliedMessage.author : newestMessages.map(m => m.author)[1]
   const previousMessage = isReply ? repliedMessage : newestMessages.map(m => m)[1]
 
