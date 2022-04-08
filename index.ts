@@ -1288,6 +1288,8 @@ client.on('messageCreate', async message => {
   ////   createChatResponse(message);
   ////   return;
   //// }
+  //! Suggestion: Decrease time between replies for every message, increasing it over time
+  //! This will make the bot reply to regular messages, but significantly reduce the amount of messages it sends.
   // Respond to replies //* replacement for above
   if (message.type === "REPLY" && previousMessage.author.equals(message.client.user)) {
     createChatResponse(message);
@@ -1309,7 +1311,7 @@ client.on('messageCreate', async message => {
     saveImagae(file);
 
     // Respond with random downloaded image
-    if (Math.random() < 0.05) {
+    if (Math.random() < 0.50) {
       sendMessage(async () => {
         const images = JSON.parse(fs.readFileSync('./data/download.json', 'utf8')).images as string[];
         const randomImage = images[Math.floor(Math.random() * images.length)];
