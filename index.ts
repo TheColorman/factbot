@@ -1295,8 +1295,8 @@ client.on('messageCreate', async message => {
   }
 
 
-  // Respond to 0.2% of messages
-  if (Math.random() < 0.002) {
+  // Respond to 0.5% of messages
+  if (Math.random() < 0.005) {
     createChatResponse(message);
     return;
   }
