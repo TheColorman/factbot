@@ -1,4 +1,4 @@
-import { Client, Intents, Message, MessageAttachment, MessageEmbed } from 'discord.js';
+import { Client, Intents, Message, MessageAttachment, MessageEmbed, MessagePayload, ReplyMessageOptions } from 'discord.js';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
@@ -1166,6 +1166,13 @@ const createOutput = async (message: string, inputMessage?: Message): Promise<st
 
   return message;
 }
+const safeReply = async (message: Message, content: string | MessagePayload | ReplyMessageOptions) => {
+  try {
+    await message.reply(content);
+  } catch(error) {
+    console.log(error);
+  }
+}
 
 const saveImagae = (attachment: MessageAttachment | MessageEmbed) => {
   // Save attachment link
@@ -1223,7 +1230,7 @@ const saveMessage = async (message: Message, previousMessage: Message): Promise<
   });
   fs.writeFileSync('./data/messages.json', JSON.stringify({ messages }));
 }
-const createResponse = async (message: Message): Promise<void> => {
+const createChatResponse = async (message: Message): Promise<void> => {
   // Get letter counts
   const letterCounts = getLetterCounts(message.content);
   // Load messages
@@ -1239,7 +1246,7 @@ const createResponse = async (message: Message): Promise<void> => {
   // Create response
   if (mostSimilarMessage) {
     const response = await createOutput(mostSimilarMessage.reply, message);
-    message.reply(response);
+    safeReply(message, response);
     console.log(`Sending generated message: ${response}`);
   }
 }
@@ -1254,16 +1261,18 @@ client.on('messageCreate', async message => {
 
   // Function to send messages
   async function sendMessage(sendFunction: () => Promise<any>) {
-    message.channel.sendTyping()
-      .catch(e => {
-        console.log(e);
-      });
-    setTimeout(() => {
-      sendFunction()
-        .catch(e => {
-          console.log(e);
-        })
-    }, 1000);
+    try {
+      await message.channel.sendTyping()
+      setTimeout(async () => {
+        try {
+          await sendFunction()
+        } catch(error) {
+          console.log(error);
+        }
+      }, 1000);
+    } catch(error) {
+      console.log(error);
+    }
   }
 
   // -- CHATBOT --
@@ -1275,12 +1284,12 @@ client.on('messageCreate', async message => {
   console.log(previousMessageUser.username);
   console.log(Date.now() - previousMessage.createdTimestamp);
   if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 10000 && message.type != "REPLY") {
-    createResponse(message);
+    createChatResponse(message);
     return;
   }
   // Respond to 5% of messages
   if (Math.random() < 0.02) {
-    createResponse(message);
+    createChatResponse(message);
     return;
   }
 
@@ -1296,7 +1305,7 @@ client.on('messageCreate', async message => {
       sendMessage(async () => {
         const images = JSON.parse(fs.readFileSync('./data/download.json', 'utf8')).images as string[];
         const randomImage = images[Math.floor(Math.random() * images.length)];
-        await message.reply(randomImage);
+        await safeReply(message, randomImage);
       });
     }
   }
@@ -1305,13 +1314,13 @@ client.on('messageCreate', async message => {
 
   // Respond to bots
   if (message.author.bot && Math.random() < 0.05) {
-    sendMessage(async () => message.reply(await createOutput(botReplies[Math.floor(Math.random() * botReplies.length)])))
+    sendMessage(async () => safeReply(message, await createOutput(botReplies[Math.floor(Math.random() * botReplies.length)])))
     return;
   }
 
   // Respond to mentions
   if (message.mentions.users.has(message.client.user.id)) {
-    sendMessage(async () => message.reply(await createOutput(general[Math.floor(Math.random() * general.length)], message)));
+    sendMessage(async () => safeReply(message, await createOutput(general[Math.floor(Math.random() * general.length)], message)));
     return;
   }
 
@@ -1319,7 +1328,7 @@ client.on('messageCreate', async message => {
   if (previousMessageUser.equals(message.client.user)) {
     // check if message contains insults
     if (insults.some(insult => message.content.toLowerCase().includes(insult))) {
-      sendMessage(async () => message.reply(await createOutput(insultReplies[Math.floor(Math.random() * insultReplies.length)], message)));
+      sendMessage(async () => safeReply(message, await createOutput(insultReplies[Math.floor(Math.random() * insultReplies.length)], message)));
       return;
     }
   }
@@ -1327,7 +1336,7 @@ client.on('messageCreate', async message => {
   if (previousMessageUser.equals(message.client.user)) {
     // check if message contains praise
     if (praise.some(praise => message.content.toLowerCase().includes(praise))) {
-      sendMessage(async () => message.reply(await createOutput(praiseReplies[Math.floor(Math.random() * praiseReplies.length)], message)));
+      sendMessage(async () => safeReply(message, await createOutput(praiseReplies[Math.floor(Math.random() * praiseReplies.length)], message)));
       return;
     }
   }
@@ -1339,14 +1348,14 @@ client.on('messageCreate', async message => {
     // choose random image
     const image = images[Math.floor(Math.random() * images.length)]
     const file = new MessageAttachment(path.resolve(path.join(__dirname, "images", image)));
-    sendMessage(() => message.reply({ files: [file] }));
+    sendMessage(() => safeReply(message, { files: [file] }));
     return;
   }
   // bug
   if (message.content.toLowerCase().includes("bug")) {
     const bug = bugs[Math.floor(Math.random() * bugs.length)]
     const file = new MessageAttachment(path.resolve(path.join(__dirname, 'images', 'bug', bug)));
-    sendMessage(() => message.reply({ files: [file] }));
+    sendMessage(() => safeReply(message, { files: [file] }));
     return;
   }
   // sex 
@@ -1354,12 +1363,12 @@ client.on('messageCreate', async message => {
     const horny = images.filter(image => image.includes("horny"));
     const image = horny[Math.floor(Math.random() * horny.length)];
     const file = new MessageAttachment(path.resolve(path.join(__dirname, 'images', image)));
-    sendMessage(() => message.reply({ files: [file] }));
+    sendMessage(() => safeReply(message, { files: [file] }));
     return;
   }
   // greetings
   if (greetings.some(w => message.content.includes(w) && Math.random() < 0.10)) {
-    sendMessage(async () => message.reply(await createOutput(greetings[Math.floor(Math.random() * greetings.length)])));
+    sendMessage(async () => safeReply(message, await createOutput(greetings[Math.floor(Math.random() * greetings.length)])));
     return;
   }
 });
