@@ -1319,7 +1319,13 @@ client.on('messageCreate', async message => {
   // Respond to mentions
   if (message.mentions.users.has(message.client.user.id)) {
     // Respond with chatbot message if previous message was me + less than 10 seconds ago
-    if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 10000) {
+    if (message.type === "REPLY") {
+      const reference = await message.fetchReference();
+      if (reference.author.equals(message.client.user) && Date.now() - reference.createdTimestamp < 10000) {
+        createChatResponse(message);
+        return;
+      }
+    } else if (previousMessage.author.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 10000) {
       createChatResponse(message);
       return;
     }
