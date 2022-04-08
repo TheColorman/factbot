@@ -1280,13 +1280,13 @@ client.on('messageCreate', async message => {
     saveMessage(message, previousMessage);
   }
   // Reply with chatbot if previous message was me
-  // and less than 10 seconds ago
-  if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 7000 && message.type != "REPLY") {
+  // and less than 10 seconds ago and 60% chance
+  if (previousMessageUser.equals(message.client.user) && Math.random() < 0.6 && Date.now() - previousMessage.createdTimestamp < 7000 && message.type != "REPLY") {
     createChatResponse(message);
     return;
   }
-  // Respond to 5% of messages
-  if (Math.random() < 0.02) {
+  // Respond to 0.5% of messages
+  if (Math.random() < 0.005) {
     createChatResponse(message);
     return;
   }
