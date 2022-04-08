@@ -1255,9 +1255,11 @@ const createChatResponse = async (message: Message): Promise<void> => {
 client.on('messageCreate', async message => {
   if (!message.client.user) return;
   if (message.author.equals(message.client.user)) return;
-  const messages = await message.channel.messages.fetch({ limit: 2 })
-  const previousMessageUser = messages.map(m => m.author)[1]
-  const previousMessage = messages.map(m => m)[1]
+  const isReply = message.type === "REPLY";
+  const newestMessages = await message.channel.messages.fetch({ limit: 2 })
+  const repliedMessage = await message.fetchReference();
+  const previousMessageUser = isReply ? repliedMessage.author : newestMessages.map(m => m.author)[1]
+  const previousMessage = isReply ? repliedMessage : newestMessages.map(m => m)[1]
 
   // Function to send messages
   async function sendMessage(sendFunction: () => Promise<any>) {
@@ -1287,7 +1289,7 @@ client.on('messageCreate', async message => {
   ////   return;
   //// }
   // Respond to replies //* replacement for above
-  if (message.type === "REPLY" && (await message.fetchReference()).author.equals(message.client.user)) {
+  if (message.type === "REPLY" && previousMessage.author.equals(message.client.user)) {
     createChatResponse(message);
     return;
   }
