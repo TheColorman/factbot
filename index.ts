@@ -65,7 +65,8 @@ const general = ['I have commited several warcrimes during the Bosnian civil war
   'fuck off',
   'interesting argument, but i am in your walls',
   'fun fact: i know where you live',
-  'fun fact: your parents died in a car crash 8 years ago'
+  'fun fact: your parents died in a car crash 8 years ago',
+  'fun fact: I am part of a balanced breakfast',
 ];
 
 const botReplies = [
