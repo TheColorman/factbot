@@ -1386,7 +1386,7 @@ client.on('messageCreate', async message => {
     return;
   }
   // greetings
-  if (greetings.some(w => message.content.includes(w) && Math.random() < 0.10)) {
+  if (greetings.some(w => message.content.startsWith(w) && Math.random() < 0.10)) {
     sendMessage(async () => safeReply(message, await createOutput(greetings[Math.floor(Math.random() * greetings.length)])));
     return;
   }
