@@ -5,10 +5,6 @@ import path from 'path';
 dotenv.config();
 const token = process.env.TOKEN;
 
-type Image = {
-  url: string;
-  name: string;
-}
 type chatMessage = {
   message: string;
   reply: string;
@@ -1147,7 +1143,7 @@ const greetings = [
   "hello",
   "greetings",
   "hey",
-]
+];
 
 
 const createOutput = async (message: string, inputMessage?: Message): Promise<string> => {
@@ -1175,13 +1171,10 @@ const saveImagae = (attachment: MessageAttachment | MessageEmbed) => {
   if (!attachment || !attachment.url) return;
   console.log(`Saving image ${attachment.url}`);
   // Save attachment to data/download.json
-  const image = {
-    url: attachment.url,
-    name: ("name" in attachment ? attachment.name : "Embed") ?? "Embed",
-  };
-  const images = JSON.parse(fs.readFileSync('./data/download.json', 'utf8')).images as Image[];
+  const image = attachment.url;
+  const images = JSON.parse(fs.readFileSync('./data/download.json', 'utf8')).images as string[];
   // Check if url exists
-  const imageExists = images.find(i => i.url === image.url);
+  const imageExists = images.find(i => i === image);
   if (imageExists) return;
   images.push(image);
   fs.writeFileSync('./data/download.json', JSON.stringify({ images }));
@@ -1298,9 +1291,9 @@ client.on('messageCreate', async message => {
     // Respond with random downloaded image
     if (Math.random() < 0.05) {
       sendMessage(async () => {
-        const images = JSON.parse(fs.readFileSync('./data/download.json', 'utf8')).images as Image[];
+        const images = JSON.parse(fs.readFileSync('./data/download.json', 'utf8')).images as string[];
         const randomImage = images[Math.floor(Math.random() * images.length)];
-        await message.reply(randomImage.url);
+        await message.reply(randomImage);
       });
     }
   }
