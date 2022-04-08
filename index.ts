@@ -1211,6 +1211,7 @@ const getLetterCounts = (str: string): number[] => {
 const saveMessage = async (message: Message, previousMessage: Message): Promise<void> => {
   console.log(`Saving message from ${message.author.username}: ${message.content}`);
   const replyText = message.content;
+  if (replyText.length > 1000 || replyText.length < 1) return;
   const messageText = message.type === "REPLY" ?
     (await message.fetchReference()).content :
     previousMessage.content;
