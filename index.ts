@@ -1279,12 +1279,20 @@ client.on('messageCreate', async message => {
   if (!previousMessageUser.equals(message.author) && Date.now() - previousMessage.createdTimestamp < 24 * 60 * 60 * 1000) {
     saveMessage(message, previousMessage);
   }
-  // Reply with chatbot if previous message was me
-  // and less than 10 seconds ago and 60% chance
-  if (previousMessageUser.equals(message.client.user) && Math.random() < 0.6 && Date.now() - previousMessage.createdTimestamp < 7000 && message.type != "REPLY") {
+  //* Removed because it was way too much
+  // // Reply with chatbot if previous message was me
+  // // and less than 10 seconds ago and 60% chance
+  //// if (previousMessageUser.equals(message.client.user) && Math.random() < 0.6 && Date.now() - previousMessage.createdTimestamp < 7000 && message.type != "REPLY") {
+  ////   createChatResponse(message);
+  ////   return;
+  //// }
+  // Respond to replies //* replacement for above
+  if (message.type === "REPLY" && (await message.fetchReference()).author.equals(message.client.user)) {
     createChatResponse(message);
     return;
   }
+
+
   // Respond to 0.5% of messages
   if (Math.random() < 0.005) {
     createChatResponse(message);
