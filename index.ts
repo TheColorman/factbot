@@ -1212,11 +1212,8 @@ const getLetterCounts = (str: string): number[] => {
   return letterCounts;
 }
 const saveMessage = async (message: Message, previousMessage: Message): Promise<void> => {
-  if (!message.content && message.embeds.length > 0) {
-
-  }
-  console.log(`Saving message from ${message.author.username}: ${message.content}`);
   const replyText = !message.content && message.embeds.length > 0 ? { embeds: [message.embeds[0]] } : message.content;
+  console.log(`Saving message from ${message.author.username}: ${replyText}`);
   if (typeof replyText === "string" && (replyText.length > 1000 || replyText.length < 1)) return;
   const messageText = message.type === "REPLY" ?
     (await message.fetchReference()).content :
