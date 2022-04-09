@@ -7,7 +7,7 @@ const token = process.env.TOKEN;
 
 type chatMessage = {
   message: string;
-  reply: string;
+  reply: string | { embeds: MessageEmbed[] };
   letters: number[]; // letter occurences in alphabetical order a-z
 }
 
@@ -115,7 +115,7 @@ const insultReplies = [
   "bad bot",
   "retard", "retar", "etard", "retrd", "reard", "rtard", "etard", "retardd", "retarrd", "retaard", "rettard", "reetard", "rretard", "retarfd", "retarcd", "retarvd", "retarsd", "retarwd", "retared", "retarrd", "retarxd", "retatrd", "retafrd", "retagrd", "retaerd", "retadrd", "retsard", "retzard", "retxard", "retqard", "retward", "reytard", "regtard", "rehtard", "rertard", "reftard", "rretard", "rdetard", "rfetard", "rwetard", "rsetard", "tretard", "fretard", "gretard", "eretard", "dretard", "retarf", "retarc", "retarv", "retars", "retarw", "retare", "retarr", "retarx", "tetard", "fetard", "getard", "eetard", "detard", "retsrd", "retzrd", "retxrd", "retqrd", "retwrd", "reyard", "regard", "rehard", "rerard", "refard", "rrtard", "rdtard", "rftard", "rwtard", "rstard", "tetard", "fetard", "getard", "eetard", "detard", "retadr", "retrad", "reatrd", "rteard", "ertard",
   "idiot", "idio", "idit", "diot", "iiot", "diot", "idiott", "idioot", "idiiot", "iddiot", "iidiot", "idioyt", "idiogt", "idioht", "idiort", "idioft", "idipot", "idilot", "idiiot", "idikot", "idoiot", "idkiot", "idliot", "iduiot", "idjiot", "ifdiot", "icdiot", "ivdiot", "isdiot", "iwdiot", "iediot", "irdiot", "ixdiot", "oidiot", "kidiot", "lidiot", "uidiot", "jidiot", "idioy", "idiog", "idioh", "idior", "idiof", "idipt", "idilt", "idiit", "idikt", "odiot", "kdiot", "ldiot", "udiot", "jdiot", "ifiot", "iciot", "iviot", "isiot", "iwiot", "ieiot", "iriot", "ixiot", "odiot", "kdiot", "ldiot", "udiot", "jdiot", "idito", "idoit", "iidot", "diiot",
-// "faggot", "faggo", "faggt", "fagot", "fagot", "fggot", "aggot", "faggott", "faggoot", "fagggot", "fagggot", "faaggot", "ffaggot", "faggoyt", "faggogt", "faggoht", "faggort", "faggoft", "faggpot", "fagglot", "faggiot", "faggkot", "faghgot", "fagbgot", "fagngot", "fagfgot", "fagrgot", "fagtgot", "fagygot", "fagvgot", "fahggot", "fabggot", "fanggot", "fafggot", "farggot", "fatggot", "fayggot", "favggot", "fsaggot", "fzaggot", "fxaggot", "fqaggot", "fwaggot", "gfaggot", "vfaggot", "bfaggot", "dfaggot", "efaggot", "rfaggot", "tfaggot", "cfaggot", "faggoy", "faggog", "faggoh", "faggor", "faggof", "faggpt", "fagglt", "faggit", "faggkt", "fahgot", "fabgot", "fangot", "fafgot", "fargot", "fatgot", "faygot", "favgot", "fahgot", "fabgot", "fangot", "fafgot", "fargot", "fatgot", "faygot", "favgot", "fsggot", "fzggot", "fxggot", "fqggot", "fwggot", "gaggot", "vaggot", "baggot", "daggot", "eaggot", "raggot", "taggot", "caggot", "faggto", "fagogt", "faggot", "fgagot", "afggot",
+  // "faggot", "faggo", "faggt", "fagot", "fagot", "fggot", "aggot", "faggott", "faggoot", "fagggot", "fagggot", "faaggot", "ffaggot", "faggoyt", "faggogt", "faggoht", "faggort", "faggoft", "faggpot", "fagglot", "faggiot", "faggkot", "faghgot", "fagbgot", "fagngot", "fagfgot", "fagrgot", "fagtgot", "fagygot", "fagvgot", "fahggot", "fabggot", "fanggot", "fafggot", "farggot", "fatggot", "fayggot", "favggot", "fsaggot", "fzaggot", "fxaggot", "fqaggot", "fwaggot", "gfaggot", "vfaggot", "bfaggot", "dfaggot", "efaggot", "rfaggot", "tfaggot", "cfaggot", "faggoy", "faggog", "faggoh", "faggor", "faggof", "faggpt", "fagglt", "faggit", "faggkt", "fahgot", "fabgot", "fangot", "fafgot", "fargot", "fatgot", "faygot", "favgot", "fahgot", "fabgot", "fangot", "fafgot", "fargot", "fatgot", "faygot", "favgot", "fsggot", "fzggot", "fxggot", "fqggot", "fwggot", "gaggot", "vaggot", "baggot", "daggot", "eaggot", "raggot", "taggot", "caggot", "faggto", "fagogt", "faggot", "fgagot", "afggot",
 ];
 const praiseReplies = [
   "You're a good person, %p!",
@@ -1147,21 +1147,23 @@ const greetings = [
 ];
 
 
-const createOutput = async (message: string, inputMessage?: Message): Promise<string> => {
-  // %r, random number
-  message = message.replace('%r', Math.floor(Math.random() * 1000).toString());
-  // %w, random word
-  message = message.replace('%w', words[Math.floor(Math.random() * words.length)]);
-  // %u, random user on server
-  if (inputMessage) {
-    const allUsers = await inputMessage.guild?.members.fetch();
-    const nonbots = allUsers?.filter(u => !u.user.bot);
-    const randomUser = nonbots?.random();
-    message = message.replace('%u', randomUser ? `<@${randomUser.id}>` : "me");
-  }
-  // %p, user being replied to
-  if (inputMessage) {
-    message = message.replace('%p', `<@${inputMessage.author.id}>`);
+const createOutput = async (message: string | { embeds: MessageEmbed[] }, inputMessage?: Message): Promise<string | { embeds: MessageEmbed[] }> => {
+  if (typeof message === "string") {
+    // %r, random number
+    message = message.replace('%r', Math.floor(Math.random() * 1000).toString());
+    // %w, random word
+    message = message.replace('%w', words[Math.floor(Math.random() * words.length)]);
+    // %u, random user on server
+    if (inputMessage) {
+      const allUsers = await inputMessage.guild?.members.fetch();
+      const nonbots = allUsers?.filter(u => !u.user.bot);
+      const randomUser = nonbots?.random();
+      message = message.replace('%u', randomUser ? `<@${randomUser.id}>` : "me");
+    }
+    // %p, user being replied to
+    if (inputMessage) {
+      message = message.replace('%p', `<@${inputMessage.author.id}>`);
+    }
   }
 
   return message;
@@ -1169,7 +1171,7 @@ const createOutput = async (message: string, inputMessage?: Message): Promise<st
 const safeReply = async (message: Message, content: string | MessagePayload | ReplyMessageOptions) => {
   try {
     await message.reply(content);
-  } catch(error) {
+  } catch (error) {
     console.log(error);
   }
 }
@@ -1210,9 +1212,12 @@ const getLetterCounts = (str: string): number[] => {
   return letterCounts;
 }
 const saveMessage = async (message: Message, previousMessage: Message): Promise<void> => {
+  if (!message.content && message.embeds.length > 0) {
+
+  }
   console.log(`Saving message from ${message.author.username}: ${message.content}`);
-  const replyText = message.content;
-  if (replyText.length > 1000 || replyText.length < 1) return;
+  const replyText = !message.content && message.embeds.length > 0 ? { embeds: [message.embeds[0]] } : message.content;
+  if (typeof replyText === "string" && (replyText.length > 1000 || replyText.length < 1)) return;
   const messageText = message.type === "REPLY" ?
     (await message.fetchReference()).content :
     previousMessage.content;
@@ -1268,11 +1273,11 @@ client.on('messageCreate', async message => {
       setTimeout(async () => {
         try {
           await sendFunction()
-        } catch(error) {
+        } catch (error) {
           console.log(error);
         }
       }, 1000);
-    } catch(error) {
+    } catch (error) {
       console.log(error);
     }
   }
