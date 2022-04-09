@@ -1213,7 +1213,7 @@ const getLetterCounts = (str: string): number[] => {
 }
 const saveMessage = async (message: Message, previousMessage: Message): Promise<void> => {
   const replyText = !message.content && message.embeds.length > 0 ? { embeds: [message.embeds[0]] } : message.content;
-  console.log(`Saving message from ${message.author.username}: ${replyText}`);
+  console.log(`Saving message from ${message.author.username}: "${replyText}"\n in response to ${previousMessage.author.username}: "${previousMessage.content}"`);
   if (typeof replyText === "string" && (replyText.length > 1000 || replyText.length < 1)) return;
   const messageText = message.type === "REPLY" ?
     (await message.fetchReference()).content :
