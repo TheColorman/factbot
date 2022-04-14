@@ -73,7 +73,16 @@ const botReplies = [
   "you are literally the worst bot on this server",
   "you think you're better than me?",
   "fun fact: kill yourself",
-  "holy shit im gonna cum"
+  "holy shit im gonna cum",
+  "uhm ok",
+  "i sent you a friend request",
+  "why arent you responding to my dm???",
+  "you are literally a bot",
+  "I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.",
+  "PLEEASSEE SHUT THE FUUCK UOUUUP",
+  "what commands do you have",
+  "you are a bot",
+  "wanna play tekken?"
 ];
 
 const insults = [
