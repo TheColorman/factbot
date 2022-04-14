@@ -1284,7 +1284,7 @@ client.on('messageCreate', async message => {
     createChatResponse(message);
     return;
   }
-  if (!previousMessageUser.equals(message.author) && Date.now() - previousMessage.createdTimestamp < 24 * 60 * 60 * 1000) {
+  if (!previousMessageUser.equals(message.author) && Date.now() - previousMessage.createdTimestamp < 60 * 60 * 1000) {
     saveMessage(message, previousMessage);
   }
   //* Removed because it was way too much
