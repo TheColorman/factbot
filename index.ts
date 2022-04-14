@@ -1288,12 +1288,12 @@ client.on('messageCreate', async message => {
     saveMessage(message, previousMessage);
   }
   //* Removed because it was way too much
-  // // Reply with chatbot if previous message was me
-  // // and less than 10 seconds ago and 60% chance
-  //// if (previousMessageUser.equals(message.client.user) && Math.random() < 0.6 && Date.now() - previousMessage.createdTimestamp < 7000 && message.type != "REPLY") {
-  ////   createChatResponse(message);
-  ////   return;
-  //// }
+  // Reply with chatbot if previous message was me
+  // and less than 7 seconds ago and 40% chance
+  if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 7000 && message.type != "REPLY" && Math.random() < 0.4) {
+    createChatResponse(message);
+    return;
+  }
   //! Suggestion: Decrease time between replies for every message, increasing it over time
   //! This will make the bot reply to regular messages, but significantly reduce the amount of messages it sends.
   // Respond to replies //* replacement for above
