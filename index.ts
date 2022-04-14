@@ -1280,6 +1280,10 @@ client.on('messageCreate', async message => {
   }
 
   // -- CHATBOT --
+  if (message.mentions.has(message.client.user) && message.content.slice("<@961239124562567169>".length, message.content.length).trim().length > 0) {
+    createChatResponse(message);
+    return;
+  }
   if (!previousMessageUser.equals(message.author) && Date.now() - previousMessage.createdTimestamp < 24 * 60 * 60 * 1000) {
     saveMessage(message, previousMessage);
   }
