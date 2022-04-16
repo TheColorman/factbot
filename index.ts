@@ -1299,7 +1299,7 @@ client.on('messageCreate', async message => {
   //* Removed because it was way too much
   // Reply with chatbot if previous message was me
   // and less than 7 seconds ago and 40% chance
-  if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 7000 && message.type != "REPLY" && Math.random() < 0.4) {
+  if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 7000 && message.type != "REPLY" && Math.random() < 0.3) {
     createChatResponse(message);
     return;
   }
