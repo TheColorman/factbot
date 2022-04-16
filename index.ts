@@ -1395,7 +1395,7 @@ client.on('messageCreate', async message => {
     return;
   }
   // sex 
-  if (hornyWords.some(w => message.content.includes(w))) {
+  if (Math.random() < 0.1 && hornyWords.some(w => message.content.includes(w))) {
     const horny = images.filter(image => image.includes("horny"));
     const image = horny[Math.floor(Math.random() * horny.length)];
     const file = new MessageAttachment(path.resolve(path.join(__dirname, 'images', image)));
