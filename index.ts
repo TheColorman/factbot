@@ -1300,7 +1300,7 @@ client.on('messageCreate', async message => {
   //* Removed because it was way too much
   // Reply with chatbot if previous message was me
   // and less than 7 seconds ago and 40% chance
-  if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 7000 && message.type != "REPLY" && Math.random() < 0.4) {
+  if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 7000 && message.type != "REPLY" && Math.random() < 0.3) {
     createChatResponse(message);
     return;
   }
@@ -1396,7 +1396,7 @@ client.on('messageCreate', async message => {
     return;
   }
   // sex 
-  if (hornyWords.some(w => message.content.includes(w))) {
+  if (Math.random() < 0.1 && hornyWords.some(w => message.content.includes(w))) {
     const horny = images.filter(image => image.includes("horny"));
     const image = horny[Math.floor(Math.random() * horny.length)];
     const file = new MessageAttachment(path.resolve(path.join(__dirname, 'images', image)));
