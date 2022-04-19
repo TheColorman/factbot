@@ -1253,7 +1253,8 @@ const createChatResponse = async (message: Message): Promise<void> => {
   });
   // Get most similar message
   const mostSimilar = Math.min(...similarities);
-  const mostSimilarMessage = messages.find(m => m.letters.reduce((acc, cur, i) => acc + Math.abs(cur - letterCounts[i]), 0) === mostSimilar);
+  const mostSimilarMessageList = messages.filter(m => m.letters.reduce((acc, cur, i) => acc + Math.abs(cur - letterCounts[i]), 0) === mostSimilar);
+  const mostSimilarMessage = mostSimilarMessageList[Math.floor(Math.random() * mostSimilarMessageList.length)];
   // Create response
   if (mostSimilarMessage) {
     const response = await createOutput(mostSimilarMessage.reply, message);
