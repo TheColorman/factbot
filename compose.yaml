@@ -12,3 +12,4 @@ services:
     security_opt:
       - seccomp:unconfined
     command: npm run setup
+    restart: always
