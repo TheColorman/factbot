@@ -1323,8 +1323,10 @@ client.on('messageCreate', async message => {
   // -- IMAGE COLLECTION --
   // If the message contains a link to an image or attachment
   if (message.attachments.size > 0 || message.embeds.length > 0) {
-    const file = message.attachments.first() || message.embeds[0];
-    saveImagae(file);
+    if (!message.author.bot) {
+      const file = message.attachments.first() || message.embeds[0];
+      saveImagae(file);
+    }
 
     // Respond with random downloaded image
     if (Math.random() < 0.10) {
