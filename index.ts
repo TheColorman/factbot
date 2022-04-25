@@ -1391,7 +1391,7 @@ client.on('messageCreate', async message => {
     return;
   }
   // bug
-  if (message.content.toLowerCase().includes("bug")) {
+  if (message.content.toLowerCase().includes("bug") && Math.random() > 0.5) {
     const bug = bugs[Math.floor(Math.random() * bugs.length)]
     const file = new MessageAttachment(path.resolve(path.join(__dirname, 'images', 'bug', bug)));
     sendMessage(() => safeReply(message, { files: [file] }));
