@@ -82,7 +82,7 @@ const botReplies = [
   "PLEEASSEE SHUT THE FUUCK UOUUUP",
   "what commands do you have",
   "you are a bot",
-  "wanna play tekken?"
+  "wanna play %g?"
 ];
 
 const insults = [
@@ -138,7 +138,6 @@ const praiseReplies = [
   "ill suck your duck for 20 dollars",
   "thank you so much %USERNAME%"
 ]
-
 
 const words = ["cause",
   "wren",
@@ -1142,6 +1141,60 @@ const words = ["cause",
   "scintillating"
 ];
 
+const games = [
+  "Battlefield V",
+  "Project Zomboid",
+  "Far Cry",
+  "Pulsar: Lost Colony",
+  "Ghost Recon",
+  "Keep Talking and Nobody Explodes",
+  "Tekken",
+  "SWAT 4",
+  "Space Station 13",
+  "Dota 2",
+  "Warframe",
+  "World of Warcraft",
+  "Insurgency: Sandstorm",
+  "Overcooked",
+  "Squad",
+  "Barotrauma",
+  "Raft",
+  "Apex Legends",
+  "Monster Hunter",
+  "Payday",
+  "Sea of Thieves",
+  "The Division 2",
+  "Fortnite",
+  "PUBG",
+  "Hell Let Loose",
+  "Rainbow Six Siege",
+  "Rocket League",
+  "Dead by Daylight",
+  "Terraria",
+  "Dying Light",
+  "Warzone",
+  "Original Sin 2",
+  "Galactic Survival",
+  "The Forest",
+  "Helldivers",
+  "CS",
+  "Mario Kart 8",
+  "Minecraft",
+  "GTA",
+  "ARMA 3",
+  "Rust",
+  "Borderlands 3",
+  "Halo",
+  "Overwatch",
+  "Modern Warfare",
+  "Smash",
+  "Don't Starve",
+  "Destiny 2",
+  "Animal Crossing",
+  "Red Dead",
+  "Deep Rock Galactic"
+];
+
 const hornyWords = [
   "sex",
   "horny",
@@ -1162,6 +1215,8 @@ const createOutput = async (message: string | { embeds: MessageEmbed[] }, inputM
     message = message.replace('%r', Math.floor(Math.random() * 1000).toString());
     // %w, random word
     message = message.replace('%w', words[Math.floor(Math.random() * words.length)]);
+    // %g, random game
+    message = message.replace('%g', games[Math.floor(Math.random() * games.length)]);    
     // %u, random user on server
     if (inputMessage) {
       const allUsers = await inputMessage.guild?.members.fetch();
