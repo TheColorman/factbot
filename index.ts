@@ -18,7 +18,7 @@ const bugs = fs.readdirSync('./images/bug');
 
 
 client.once('ready', () => {
-  console.log('Ready!');
+  console.log('Ready as ' + client?.user?.username ?? "No username!" + ' !');
 });
 
 const general = ['I have commited several warcrimes during the Bosnian civil war',
