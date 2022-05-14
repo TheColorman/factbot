@@ -6,7 +6,6 @@ dotenv.config();
 const token = process.env.TOKEN;
 
 type chatMessage = {
-  message: string;
   reply: string | { embeds: MessageEmbed[] };
   letters: number[]; // letter occurences in alphabetical order a-z
 }
@@ -19,7 +18,7 @@ const bugs = fs.readdirSync('./images/bug');
 
 
 client.once('ready', () => {
-  console.log('Ready!');
+  console.log('Ready as ' + client?.user?.username ?? "No username!" + ' !');
 });
 
 const general = ['I have commited several warcrimes during the Bosnian civil war',
@@ -1216,7 +1215,7 @@ const createOutput = async (message: string | { embeds: MessageEmbed[] }, inputM
     // %w, random word
     message = message.replace('%w', words[Math.floor(Math.random() * words.length)]);
     // %g, random game
-    message = message.replace('%g', games[Math.floor(Math.random() * games.length)]);    
+    message = message.replace('%g', games[Math.floor(Math.random() * games.length)]);
     // %u, random user on server
     if (inputMessage) {
       const allUsers = await inputMessage.guild?.members.fetch();
@@ -1275,6 +1274,16 @@ const getLetterCounts = (str: string): number[] => {
   const letterCounts = sortedLetters.map(l => messageLetterCount[l]);
   return letterCounts;
 }
+const arraysEqual = (a: number[], b: number[]): boolean => {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length !== b.length) return false;
+
+  for (var i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
 const saveMessage = async (message: Message, previousMessage: Message): Promise<void> => {
   const replyText = !message.content && message.embeds.length > 0 ? { embeds: [message.embeds[0]] } : message.content;
   console.log(`Saving message from ${message.author.username}: "${replyText}" in response to ${previousMessage.author.username}: "${previousMessage.content}"`);
@@ -1287,10 +1296,9 @@ const saveMessage = async (message: Message, previousMessage: Message): Promise<
 
   // Add to database
   const messages = JSON.parse(fs.readFileSync('./data/messages.json', 'utf8')).messages as chatMessage[];
-  const messageExists = messages.find(m => m.message === messageText);
+  const messageExists = messages.find(m => arraysEqual(m.letters, letterCounts));
   if (messageExists) return;
   messages.push({
-    message: messageText,
     reply: replyText,
     letters: letterCounts
   });
@@ -1327,6 +1335,12 @@ client.on('messageCreate', async message => {
   const repliedMessage = isReply ? await message.fetchReference() : undefined ?? newestMessages.map(m => m)[1];
   const previousMessageUser = isReply ? repliedMessage.author : newestMessages.map(m => m.author)[1]
   const previousMessage = isReply ? repliedMessage : newestMessages.map(m => m)[1]
+  const mentionsSelf = message.mentions.has(message.client.user);
+
+  // Chance to ignore if bot loop
+  if (message.author.bot && (mentionsSelf || repliedMessage?.author.equals(message.client.user))) {
+    if (Math.random() < 0.3) return;
+  }
 
   // Function to send messages
   async function sendMessage(sendFunction: () => Promise<any>) {
@@ -1338,7 +1352,7 @@ client.on('messageCreate', async message => {
         } catch (error) {
           console.log(error);
         }
-      }, 1000);
+      }, 2000);
     } catch (error) {
       console.log(error);
     }
@@ -1346,7 +1360,7 @@ client.on('messageCreate', async message => {
 
   // -- CHATBOT --
   if (message.mentions.has(message.client.user) && message.content.slice("<@961239124562567169>".length, message.content.length).trim().length > 0) {
-    createChatResponse(message);
+    sendMessage(() => createChatResponse(message));
     return;
   }
   if (!previousMessageUser.equals(message.author) && Date.now() - previousMessage.createdTimestamp < 60 * 60 * 1000) {
@@ -1356,21 +1370,21 @@ client.on('messageCreate', async message => {
   // Reply with chatbot if previous message was me
   // and less than 7 seconds ago and 40% chance
   if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 7000 && message.type != "REPLY" && Math.random() < 0.3) {
-    createChatResponse(message);
+    sendMessage(() => createChatResponse(message));
     return;
   }
   //! Suggestion: Decrease time between replies for every message, increasing it over time
   //! This will make the bot reply to regular messages, but significantly reduce the amount of messages it sends.
   // Respond to replies //* replacement for above
   if (message.type === "REPLY" && previousMessage.author.equals(message.client.user)) {
-    createChatResponse(message);
+    sendMessage(() => createChatResponse(message));
     return;
   }
 
 
   // Respond to 0.5% of messages
   if (Math.random() < 0.005) {
-    createChatResponse(message);
+    sendMessage(() => createChatResponse(message));
     return;
   }
 
@@ -1407,11 +1421,11 @@ client.on('messageCreate', async message => {
     if (message.type === "REPLY") {
       const reference = await message.fetchReference();
       if (reference.author.equals(message.client.user) && Date.now() - reference.createdTimestamp < 7000) {
-        createChatResponse(message);
+        sendMessage(() => createChatResponse(message));
         return;
       }
     } else if (previousMessage.author.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 7000) {
-      createChatResponse(message);
+      sendMessage(() => createChatResponse(message));
       return;
     }
     sendMessage(async () => safeReply(message, await createOutput(general[Math.floor(Math.random() * general.length)], message)));
