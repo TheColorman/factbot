@@ -6,7 +6,6 @@ dotenv.config();
 const token = process.env.TOKEN;
 
 type chatMessage = {
-  message: string;
   reply: string | { embeds: MessageEmbed[] };
   letters: number[]; // letter occurences in alphabetical order a-z
 }
@@ -19,7 +18,7 @@ const bugs = fs.readdirSync('./images/bug');
 
 
 client.once('ready', () => {
-  console.log('Ready!');
+  console.log('Ready as ' + client?.user?.username ?? "No username!" + ' !');
 });
 
 const general = ['I have commited several warcrimes during the Bosnian civil war',
@@ -1287,10 +1286,9 @@ const saveMessage = async (message: Message, previousMessage: Message): Promise<
 
   // Add to database
   const messages = JSON.parse(fs.readFileSync('./data/messages.json', 'utf8')).messages as chatMessage[];
-  const messageExists = messages.find(m => m.message === messageText);
+  const messageExists = messages.find(m => m.letters == letterCounts);
   if (messageExists) return;
   messages.push({
-    message: messageText,
     reply: replyText,
     letters: letterCounts
   });
