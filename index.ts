@@ -1352,7 +1352,7 @@ client.on('messageCreate', async message => {
         } catch (error) {
           console.log(error);
         }
-      }, 1000);
+      }, 2000);
     } catch (error) {
       console.log(error);
     }
@@ -1360,7 +1360,7 @@ client.on('messageCreate', async message => {
 
   // -- CHATBOT --
   if (message.mentions.has(message.client.user) && message.content.slice("<@961239124562567169>".length, message.content.length).trim().length > 0) {
-    createChatResponse(message);
+    sendMessage(() => createChatResponse(message));
     return;
   }
   if (!previousMessageUser.equals(message.author) && Date.now() - previousMessage.createdTimestamp < 60 * 60 * 1000) {
@@ -1370,21 +1370,21 @@ client.on('messageCreate', async message => {
   // Reply with chatbot if previous message was me
   // and less than 7 seconds ago and 40% chance
   if (previousMessageUser.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 7000 && message.type != "REPLY" && Math.random() < 0.3) {
-    createChatResponse(message);
+    sendMessage(() => createChatResponse(message));
     return;
   }
   //! Suggestion: Decrease time between replies for every message, increasing it over time
   //! This will make the bot reply to regular messages, but significantly reduce the amount of messages it sends.
   // Respond to replies //* replacement for above
   if (message.type === "REPLY" && previousMessage.author.equals(message.client.user)) {
-    createChatResponse(message);
+    sendMessage(() => createChatResponse(message));
     return;
   }
 
 
   // Respond to 0.5% of messages
   if (Math.random() < 0.005) {
-    createChatResponse(message);
+    sendMessage(() => createChatResponse(message));
     return;
   }
 
@@ -1421,11 +1421,11 @@ client.on('messageCreate', async message => {
     if (message.type === "REPLY") {
       const reference = await message.fetchReference();
       if (reference.author.equals(message.client.user) && Date.now() - reference.createdTimestamp < 7000) {
-        createChatResponse(message);
+        sendMessage(() => createChatResponse(message));
         return;
       }
     } else if (previousMessage.author.equals(message.client.user) && Date.now() - previousMessage.createdTimestamp < 7000) {
-      createChatResponse(message);
+      sendMessage(() => createChatResponse(message));
       return;
     }
     sendMessage(async () => safeReply(message, await createOutput(general[Math.floor(Math.random() * general.length)], message)));
