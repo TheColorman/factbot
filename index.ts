@@ -1215,7 +1215,7 @@ const createOutput = async (message: string | { embeds: MessageEmbed[] }, inputM
     // %w, random word
     message = message.replace('%w', words[Math.floor(Math.random() * words.length)]);
     // %g, random game
-    message = message.replace('%g', games[Math.floor(Math.random() * games.length)]);    
+    message = message.replace('%g', games[Math.floor(Math.random() * games.length)]);
     // %u, random user on server
     if (inputMessage) {
       const allUsers = await inputMessage.guild?.members.fetch();
@@ -1274,6 +1274,16 @@ const getLetterCounts = (str: string): number[] => {
   const letterCounts = sortedLetters.map(l => messageLetterCount[l]);
   return letterCounts;
 }
+const arraysEqual = (a: number[], b: number[]): boolean => {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length !== b.length) return false;
+
+  for (var i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
 const saveMessage = async (message: Message, previousMessage: Message): Promise<void> => {
   const replyText = !message.content && message.embeds.length > 0 ? { embeds: [message.embeds[0]] } : message.content;
   console.log(`Saving message from ${message.author.username}: "${replyText}" in response to ${previousMessage.author.username}: "${previousMessage.content}"`);
@@ -1286,7 +1296,7 @@ const saveMessage = async (message: Message, previousMessage: Message): Promise<
 
   // Add to database
   const messages = JSON.parse(fs.readFileSync('./data/messages.json', 'utf8')).messages as chatMessage[];
-  const messageExists = messages.find(m => m.letters == letterCounts);
+  const messageExists = messages.find(m => arraysEqual(m.letters, letterCounts));
   if (messageExists) return;
   messages.push({
     reply: replyText,
