@@ -1327,6 +1327,12 @@ client.on('messageCreate', async message => {
   const repliedMessage = isReply ? await message.fetchReference() : undefined ?? newestMessages.map(m => m)[1];
   const previousMessageUser = isReply ? repliedMessage.author : newestMessages.map(m => m.author)[1]
   const previousMessage = isReply ? repliedMessage : newestMessages.map(m => m)[1]
+  const mentionsSelf = message.mentions.has(message.client.user);
+
+  // Chance to ignore if bot loop
+  if (message.author.bot && (mentionsSelf || repliedMessage?.author.equals(message.client.user))) {
+    if (Math.random() < 0.3) return;
+  }
 
   // Function to send messages
   async function sendMessage(sendFunction: () => Promise<any>) {
