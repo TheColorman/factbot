@@ -1,7 +1,0 @@
-.env
-/node_modules
-package-lock.json
-index.js
-data/
-data/messages.json
-data/download.json
