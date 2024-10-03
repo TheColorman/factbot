@@ -2511,8 +2511,11 @@ client.on("messageCreate", async (message) => {
         return;
     }
 
-    // Remove markdown links
-    message.content = message.content.replace(/\[.*\]\(.*\)/g, "").trim();
+    // Remove first line if it contains "Reply to" or "Reply failed"
+    const firstline = message.content.split("\n")[0];
+    if (firstline.includes("Reply to") || firstline.includes("Reply failed")) {
+        message.content = message.content.split("\n").slice(1).join("\n");
+    }
 
     const isReply = message.type === "REPLY";
     const newestMessages = await message.channel.messages.fetch({ limit: 2 });
@@ -2528,7 +2531,7 @@ client.on("messageCreate", async (message) => {
     const mentionsSelf = message.mentions.has(message.client.user);
 
     // Chance to ignore if bot
-    if (message.author.bot || message.webhookId) {
+    if (message.author.bot && !message.webhookId) {
         if (Math.random() < 0.7) return;
     }
 
@@ -2591,7 +2594,10 @@ client.on("messageCreate", async (message) => {
         !previousMessageUser.equals(message.author) &&
         Date.now() - previousMessage.createdTimestamp < 60 * 60 * 1000
     ) {
-        saveMessage(message, previousMessage);
+        // Dont save if from webhook
+        if (!message.webhookId) {
+            saveMessage(message, previousMessage);
+        }
     }
     //* Removed because it was way too much
     // Reply with chatbot if previous message was me
