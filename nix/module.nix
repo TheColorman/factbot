@@ -17,7 +17,7 @@
           description = ''
             Name is used as a suffix for the service name. By default it takes
             the value you use for `<instance>` in:
-            {option}`services.authelia.<instances>`
+            {option}`services.factbot.instances.<instances>`
           '';
         };
 
