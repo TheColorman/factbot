@@ -2620,7 +2620,7 @@ client.on('messageCreate', async message => {
       if (response.content !== 'yes') {
         response.reply('ok i wont');
         pendingActions.delete(message.author.id);
-        return false;
+        return true;
       }
 
       response.reply('are you super duper sure?');
@@ -2628,7 +2628,7 @@ client.on('messageCreate', async message => {
         if (response.content !== 'yes i am sure') {
           response.reply('ok i wont');
           pendingActions.delete(message.author.id);
-          return false;
+          return true;
         }
 
         response.reply('ok last chance to change your mind, are you sure?');
@@ -2636,7 +2636,7 @@ client.on('messageCreate', async message => {
           if (response.content !== 'do it') {
             response.reply('ok i wont');
             pendingActions.delete(message.author.id);
-            return false;
+            return true;
           }
 
           response.reply('it will be done');
