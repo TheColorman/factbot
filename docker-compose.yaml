@@ -7,6 +7,8 @@ services:
     working_dir: "/home/node/app"
     environment:
       - "NODE_ENV=production"
+      - "IMAGES_DIR=/home/node/app/images"
+      - "DATA_DIR=/home/node/app/data"
     volumes:
       - "./:/home/node/app"
     security_opt:
