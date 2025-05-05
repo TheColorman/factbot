@@ -11,9 +11,12 @@ function isTextChannel(
   channel: Message<boolean>['channel'],
 ): channel is TextChannel | ThreadChannel {
   if (
-    ['GUILD_PUBLIC_THREAD', 'GUILD_PRIVATE_THREAD', 'GUILD_TEXT'].includes(
-      channel.type,
-    )
+    [
+      'GUILD_PUBLIC_THREAD',
+      'GUILD_PRIVATE_THREAD',
+      'GUILD_TEXT',
+      'GUILD_NEWS',
+    ].includes(channel.type)
   )
     return true;
   return false;
