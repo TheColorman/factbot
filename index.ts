@@ -2513,7 +2513,6 @@ let massDeleteIsRunning = false;
 // Respond to funny messages
 client.on('messageCreate', async message => {
   // Run action if available
-  console.log(pendingActions);
   if (
     pendingActions.has(message.author.id) &&
     pendingActions.get(message.author.id)?.(pendingActions, message)
