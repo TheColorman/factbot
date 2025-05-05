@@ -4,3 +4,5 @@ index.js
 /data
 .envrc
 .direnv
+
+**/*.js
