@@ -11,6 +11,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import fetch from 'node-fetch';
+import { deleteAllMessagesInChannel } from './features/prune';
 
 dotenv.config();
 const token = process.env.TOKEN_FILE
@@ -2497,8 +2498,29 @@ const createChatResponse = async (
   }
 };
 
+// Maps containing pending user actions. If a message comes in from a user in
+// the map, the callback is called. If the callback returns false, the user's
+// message goes through as normal. If the callback returns true, the message
+// will be ignored by factbots systems.
+type actionCallback = (
+  pendingActions: Map<string, actionCallback>,
+  message: Message,
+) => boolean;
+const pendingActions = new Map<string, actionCallback>();
+
+let massDeleteIsRunning = false;
+
 // Respond to funny messages
 client.on('messageCreate', async message => {
+  // Run action if available
+  console.log(pendingActions);
+  if (
+    pendingActions.has(message.author.id) &&
+    pendingActions.get(message.author.id)?.(pendingActions, message)
+  ) {
+    return;
+  }
+
   if (!message.client.user) return;
   if (message.author.equals(message.client.user)) return;
   // Ignore anyone with "fact" in their name
@@ -2580,6 +2602,57 @@ client.on('messageCreate', async message => {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  // Mass delete own messages feature
+  if (
+    mentionsSelf &&
+    message.content
+      .toLowerCase()
+      .includes('delete all my messages in this channel')
+  ) {
+    if (massDeleteIsRunning) {
+      message.reply(`sorry buddy, please wait your turn <3`);
+      return;
+    }
+    message.reply('are you sure?');
+
+    pendingActions.set(message.author.id, (_actions, response) => {
+      if (response.content !== 'yes') {
+        response.reply('ok i wont');
+        pendingActions.delete(message.author.id);
+        return false;
+      }
+
+      response.reply('are you super duper sure?');
+      pendingActions.set(message.author.id, (_actions, response) => {
+        if (response.content !== 'yes i am sure') {
+          response.reply('ok i wont');
+          pendingActions.delete(message.author.id);
+          return false;
+        }
+
+        response.reply('ok last chance to change your mind, are you sure?');
+        pendingActions.set(message.author.id, (_actions, response) => {
+          if (response.content !== 'do it') {
+            response.reply('ok i wont');
+            pendingActions.delete(message.author.id);
+            return false;
+          }
+
+          response.reply('it will be done');
+          massDeleteIsRunning = true;
+          deleteAllMessagesInChannel(response).then(
+            () => (massDeleteIsRunning = false),
+          );
+          pendingActions.delete(message.author.id);
+          return true;
+        });
+        return true;
+      });
+      return true;
+    });
+    return;
   }
 
   // Send image if message mentions self and contains word "meme"
