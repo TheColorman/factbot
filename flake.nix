@@ -22,5 +22,8 @@
         factbot = import ./nix/module.nix;
         default = self.modules.${system}.factbot;
       };
+      devShells.default = pkgs.mkShell {
+        packages = with pkgs; [nodejs nodemon];
+      };
     });
 }
