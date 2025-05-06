@@ -5,5 +5,5 @@ buildNpmPackage {
 
   src = ./..;
 
-  npmDepsHash = "sha256-U8P5LErBS+nsaegCi+LNBDisgTbFXCtazYkl0Vp57zs=";
+  npmDepsHash = "sha256-niIyt7L9kp9q2vYXAR+UlhBQikjU5O7HGN6lSpQVlJA=";
 }
