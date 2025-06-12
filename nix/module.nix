@@ -62,13 +62,14 @@ in {
       environment = {
         IMAGES_DIR = "/var/lib/factbot-${instance.name}/images";
         DATA_DIR = "/var/lib/factbot-${instance.name}/data";
-        TOKEN_FILE = instance.tokenFile;
+        TOKEN_FILE = "%d/token";
       };
       serviceConfig = {
         Type = "simple";
         ExecStart = "${instance.package}/bin/factbot";
         Restart = "on-failure";
         StateDirectory = "factbot-${instance.name}";
+        LoadCredential = "token:${instance.tokenFile}";
 
         # Basic hardening
         NoNewPrivileges = true;
