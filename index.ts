@@ -2467,29 +2467,27 @@ const createChatResponse = async (
   // Load messages
   const messages = JSON.parse(fs.readFileSync(MESSAGES_FILE, 'utf8'))
     .messages as chatMessage[];
-  // Calculate similarity
-  const similarities = messages.map(m => {
+
+  let mostSimilar = Infinity;
+  let mostSimilarIndex = -1;
+
+  // Calculate similarity and track minimum iteratively
+  for (let i = 0; i < messages.length; i++) {
+    const m = messages[i];
     const similarity = m.letters.reduce(
-      (acc, cur, i) => acc + Math.abs(cur - letterCounts[i]),
+      (acc, cur, idx) => acc + Math.abs(cur - letterCounts[idx]),
       0,
     );
-    return similarity;
-  });
-  // Get most similar message
-  const mostSimilar = Math.min(...similarities);
-  const mostSimilarMessageList = messages.filter(
-    m =>
-      m.letters.reduce(
-        (acc, cur, i) => acc + Math.abs(cur - letterCounts[i]),
-        0,
-      ) === mostSimilar,
-  );
-  const mostSimilarMessage =
-    mostSimilarMessageList[
-      Math.floor(Math.random() * mostSimilarMessageList.length)
-    ];
+
+    if (similarity < mostSimilar) {
+      mostSimilar = similarity;
+      mostSimilarIndex = i;
+    }
+  }
+
   // Create response
-  if (mostSimilarMessage) {
+  if (mostSimilarIndex !== -1) {
+    const mostSimilarMessage = messages[mostSimilarIndex];
     const response = await createOutput(mostSimilarMessage.reply, message);
     console.log(`Sending generated message: ${response}`);
     return response;
@@ -2896,7 +2894,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
     // @ts-ignore
     console.log(
       '❌ reaction detected, deleting message. Content: ' +
-        reaction.message.content,
+      reaction.message.content,
     );
     if (reaction!.emoji!.name === '❌') {
       await reaction!.message!.delete();
